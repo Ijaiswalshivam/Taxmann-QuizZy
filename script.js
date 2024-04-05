@@ -1,191 +1,154 @@
-const quizData = [
-  {
-    question: 'What is the capital of France?',
-    options: ['Paris', 'London', 'Berlin', 'Madrid'],
-    answer: 'Paris',
-  },
-  {
-    question: 'What is the largest planet in our solar system?',
-    options: ['Mars', 'Saturn', 'Jupiter', 'Neptune'],
-    answer: 'Jupiter',
-  },
-  {
-    question: 'Which country won the FIFA World Cup in 2018?',
-    options: ['Brazil', 'Germany', 'France', 'Argentina'],
-    answer: 'France',
-  },
-  {
-    question: 'What is the tallest mountain in the world?',
-    options: ['Mount Everest', 'K2', 'Kangchenjunga', 'Makalu'],
-    answer: 'Mount Everest',
-  },
-  {
-    question: 'Which is the largest ocean on Earth?',
-    options: [
-      'Pacific Ocean',
-      'Indian Ocean',
-      'Atlantic Ocean',
-      'Arctic Ocean',
-    ],
-    answer: 'Pacific Ocean',
-  },
-  {
-    question: 'What is the chemical symbol for gold?',
-    options: ['Au', 'Ag', 'Cu', 'Fe'],
-    answer: 'Au',
-  },
-  {
-    question: 'Who painted the Mona Lisa?',
-    options: [
-      'Pablo Picasso',
-      'Vincent van Gogh',
-      'Leonardo da Vinci',
-      'Michelangelo',
-    ],
-    answer: 'Leonardo da Vinci',
-  },
-  {
-    question: 'Which planet is known as the Red Planet?',
-    options: ['Mars', 'Venus', 'Mercury', 'Uranus'],
-    answer: 'Mars',
-  },
-  {
-    question: 'What is the largest species of shark?',
-    options: [
-      'Great White Shark',
-      'Whale Shark',
-      'Tiger Shark',
-      'Hammerhead Shark',
-    ],
-    answer: 'Whale Shark',
-  },
-  {
-    question: 'Which animal is known as the King of the Jungle?',
-    options: ['Lion', 'Tiger', 'Elephant', 'Giraffe'],
-    answer: 'Lion',
-  },
-];
-
-const quizContainer = document.getElementById('quiz');
-const resultContainer = document.getElementById('result');
-const submitButton = document.getElementById('submit');
-const retryButton = document.getElementById('retry');
-const showAnswerButton = document.getElementById('showAnswer');
-
-let currentQuestion = 0;
-let score = 0;
-let incorrectAnswers = [];
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-function displayQuestion() {
-  const questionData = quizData[currentQuestion];
-
-  const questionElement = document.createElement('div');
-  questionElement.className = 'question';
-  questionElement.innerHTML = questionData.question;
-
-  const optionsElement = document.createElement('div');
-  optionsElement.className = 'options';
-
-  const shuffledOptions = [...questionData.options];
-  shuffleArray(shuffledOptions);
-
-  for (let i = 0; i < shuffledOptions.length; i++) {
-    const option = document.createElement('label');
-    option.className = 'option';
-
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'quiz';
-    radio.value = shuffledOptions[i];
-
-    const optionText = document.createTextNode(shuffledOptions[i]);
-
-    option.appendChild(radio);
-    option.appendChild(optionText);
-    optionsElement.appendChild(option);
-  }
-
-  quizContainer.innerHTML = '';
-  quizContainer.appendChild(questionElement);
-  quizContainer.appendChild(optionsElement);
-}
-
-function checkAnswer() {
-  const selectedOption = document.querySelector('input[name="quiz"]:checked');
-  if (selectedOption) {
-    const answer = selectedOption.value;
-    if (answer === quizData[currentQuestion].answer) {
-      score++;
-    } else {
-      incorrectAnswers.push({
-        question: quizData[currentQuestion].question,
-        incorrectAnswer: answer,
-        correctAnswer: quizData[currentQuestion].answer,
-      });
+const questions = {
+    math: {
+        beginner: [
+            { type: "mcq", question: "What is 2 + 2?", options: ["3", "4", "5"], answer: "4" },
+            { type: "trueFalse", question: "Is 10 divisible by 2?", answer: "true" },
+            { type: "fillBlank", question: "The area of a square is ___ square meters with a side length of 4 meters.", answer: "16" }
+        ],
+        intermediate: [
+            { type: "mcq", question: "What is the value of π (pi) to two decimal places?", options: ["3.14", "3.16", "3.18"], answer: "3.14" },
+            { type: "trueFalse", question: "Is the square root of 25 equal to 5?", answer: "true" },
+            { type: "fillBlank", question: "The circumference of a circle is ___ meters with a radius of 5 meters.", answer: "31.42" }
+        ],
+        advanced: [
+            { type: "mcq", question: "What is the derivative of x^2 with respect to x?", options: ["2x", "x", "2"], answer: "2x" },
+            { type: "trueFalse", question: "Is the number 0 considered a prime number?", answer: "false" },
+            { type: "fillBlank", question: "The sum of the interior angles of a triangle is ___ degrees.", answer: "180" }
+        ]
+    },
+    science: {
+        beginner: [
+            { type: "mcq", question: "What is the chemical symbol for water?", options: ["H2O", "CO2", "O2"], answer: "H2O" },
+            { type: "trueFalse", question: "Is the Earth the third planet from the Sun?", answer: "true" },
+            { type: "fillBlank", question: "The atomic number of oxygen is ___.", answer: "8" }
+        ],
+        intermediate: [
+            { type: "mcq", question: "What is the process by which plants make their own food?", options: ["Photosynthesis", "Respiration", "Fermentation"], answer: "Photosynthesis" },
+            { type: "trueFalse", question: "Is the moon larger than Earth?", answer: "false" },
+            { type: "fillBlank", question: "The process of water turning into vapor is called ___.", answer: "evaporation" }
+        ],
+        advanced: [
+            { type: "mcq", question: "What is the chemical formula for table salt?", options: ["NaCl", "KCl", "CaCl2"], answer: "NaCl" },
+            { type: "trueFalse", question: "Does sound travel faster in water than in air?", answer: "true" },
+            { type: "fillBlank", question: "The SI unit of electric charge is ___.", answer: "coulomb" }
+        ]
+    },
+    history: {
+        beginner: [
+            { type: "mcq", question: "Who was the first president of the United States?", options: ["Thomas Jefferson", "Abraham Lincoln", "George Washington"], answer: "George Washington" },
+            { type: "trueFalse", question: "Did World War I end in 1918?", answer: "true" },
+            { type: "fillBlank", question: "The Magna Carta was signed in the year ___.", answer: "1215" }
+        ],
+        intermediate: [
+            { type: "mcq", question: "Who discovered America?", options: ["Christopher Columbus", "Marco Polo", "Vasco da Gama"], answer: "Christopher Columbus" },
+            { type: "trueFalse", question: "Was the Battle of Waterloo fought in 1815?", answer: "true" },
+            { type: "fillBlank", question: "The Renaissance began in the city of ___.", answer: "florence" }
+        ],
+        advanced: [
+            { type: "mcq", question: "Who was the first emperor of Rome?", options: ["Julius Caesar", "Augustus Caesar", "Nero"], answer: "Augustus Caesar" },
+            { type: "trueFalse", question: "Did the Industrial Revolution begin in the 18th century?", answer: "true" },
+            { type: "fillBlank", question: "The Russian Revolution took place in the year ___.", answer: "1917" }
+        ]
     }
-    currentQuestion++;
-    selectedOption.checked = false;
-    if (currentQuestion < quizData.length) {
-      displayQuestion();
-    } else {
-      displayResult();
-    }
-  }
+};
+
+function generateQuiz() {
+    const selectedTopics = Array.from(document.getElementById("topics").selectedOptions).map(option => option.value);
+    const selectedDifficulty = document.getElementById("difficulty").value;
+    const quizContainer = document.getElementById("quizContainer");
+    const quizQuestions = document.getElementById("quizQuestions");
+    quizQuestions.innerHTML = "";
+
+    selectedTopics.forEach(topic => {
+        const topicQuestions = questions[topic][selectedDifficulty];
+        topicQuestions.forEach(q => {
+            const questionElement = document.createElement("div");
+            let inputElement;
+            switch (q.type) {
+                case "mcq":
+                    inputElement = `<p>${q.question}</p><select id="answer-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}">`;
+                    q.options.forEach(option => {
+                        inputElement += `<option value="${option}">${option}</option>`;
+                    });
+                    inputElement += `</select>`;
+                    break;
+                case "trueFalse":
+                    inputElement = `<p>${q.question}</p><input type="radio" id="true-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}" name="answer-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}" value="true"><label for="true-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}">True</label>
+                                    <input type="radio" id="false-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}" name="answer-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}" value="false"><label for="false-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}">False</label>`;
+                    break;
+                case "fillBlank":
+                    inputElement = `<p>${q.question}</p><input type="text" id="answer-${topic}-${selectedDifficulty}-${topicQuestions.indexOf(q)}" placeholder="Your Answer">`;
+                    break;
+            }
+            questionElement.innerHTML = inputElement;
+            quizQuestions.appendChild(questionElement);
+        });
+    });
+
+    quizContainer.classList.remove("hidden");
 }
 
-function displayResult() {
-  quizContainer.style.display = 'none';
-  submitButton.style.display = 'none';
-  retryButton.style.display = 'inline-block';
-  showAnswerButton.style.display = 'inline-block';
-  resultContainer.innerHTML = `You scored ${score} out of ${quizData.length}!`;
+function submitQuiz() {
+    const quizQuestions = document.getElementById("quizQuestions").querySelectorAll("select, input[type='radio'], input[type='text']");
+    const resultsContainer = document.getElementById("resultsContainer");
+    const quizResults = document.getElementById("quizResults");
+    quizResults.innerHTML = "";
+    let score = 0;
+
+    quizQuestions.forEach(input => {
+        const [topic, difficulty, index] = input.id.split("-").slice(1);
+        const userAnswer = input.value.trim().toLowerCase();
+        const questionType = questions[topic][difficulty][index].type;
+        let correctAnswer;
+        if (questionType === "mcq") {
+            correctAnswer = questions[topic][difficulty][index].answer.toLowerCase();
+        } else if (questionType === "trueFalse") {
+            correctAnswer = questions[topic][difficulty][index].answer;
+        } else if (questionType === "fillBlank") {
+            correctAnswer = questions[topic][difficulty][index].answer.toLowerCase();
+        }
+
+        let isCorrect = false;
+        if (questionType === "trueFalse") {
+            const selectedOption = input.value;
+            if (selectedOption === correctAnswer) {
+                isCorrect = true;
+            }
+        } else {
+            if (userAnswer === correctAnswer) {
+                isCorrect = true;
+            }
+        }
+
+        const questionResult = document.createElement("p");
+        if (isCorrect) {
+            questionResult.textContent = `Question ${index + 1}: Correct!`;
+            score++;
+        } else {
+            if (questionType === "mcq") {
+                questionResult.textContent = `Question ${index + 1}: Incorrect. Correct Answer: ${correctAnswer}`;
+            } else {
+                questionResult.textContent = `Question ${index + 1}: Incorrect.`;
+            }
+        }
+        quizResults.appendChild(questionResult);
+    });
+
+    const scorePercentage = (score / quizQuestions.length) * 100;
+    const finalResult = document.createElement("p");
+    finalResult.textContent = `You scored ${score} out of ${quizQuestions.length} (${scorePercentage.toFixed(2)}%)`;
+    quizResults.appendChild(finalResult);
+
+    resultsContainer.classList.remove("hidden");
 }
 
-function retryQuiz() {
-  currentQuestion = 0;
-  score = 0;
-  incorrectAnswers = [];
-  quizContainer.style.display = 'block';
-  submitButton.style.display = 'inline-block';
-  retryButton.style.display = 'none';
-  showAnswerButton.style.display = 'none';
-  resultContainer.innerHTML = '';
-  displayQuestion();
+// Function to toggle dark mode
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
 }
 
-function showAnswer() {
-  quizContainer.style.display = 'none';
-  submitButton.style.display = 'none';
-  retryButton.style.display = 'inline-block';
-  showAnswerButton.style.display = 'none';
+// Event listener for the dark mode button
+const darkModeButton = document.getElementById('darkModeButton');
+darkModeButton.addEventListener('click', toggleDarkMode);
 
-  let incorrectAnswersHtml = '';
-  for (let i = 0; i < incorrectAnswers.length; i++) {
-    incorrectAnswersHtml += `
-      <p>
-        <strong>Question:</strong> ${incorrectAnswers[i].question}<br>
-        <strong>Your Answer:</strong> ${incorrectAnswers[i].incorrectAnswer}<br>
-        <strong>Correct Answer:</strong> ${incorrectAnswers[i].correctAnswer}
-      </p>
-    `;
-  }
 
-  resultContainer.innerHTML = `
-    <p>You scored ${score} out of ${quizData.length}!</p>
-    <p>Incorrect Answers:</p>
-    ${incorrectAnswersHtml}
-  `;
-}
-
-submitButton.addEventListener('click', checkAnswer);
-retryButton.addEventListener('click', retryQuiz);
-showAnswerButton.addEventListener('click', showAnswer);
-
-displayQuestion();
